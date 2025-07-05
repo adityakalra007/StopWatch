@@ -19,7 +19,7 @@ Another UseRef Practice Project that creates a StopWatch with Lap Feature as wel
 
 ## Tech Stack
 
-**Client:** React /
+**Client:** React / Tailwindcss
 
 ---
 
