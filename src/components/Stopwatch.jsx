@@ -3,14 +3,15 @@ import { useEffect, useRef, useState } from "react";
 export const Stopwatch = () => {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const[laps,setLaps] = useState([]);
   const intervalRef = useRef(null);
 
   const start = () => {
     if (!isRunning) {
       setIsRunning(true);
       intervalRef.current = setInterval(() => {
-        setTime((prev) => prev + 1);
-      }, 1000);
+        setTime((prev) => prev + 10);
+      }, 10);
     }
   };
 
@@ -23,16 +24,22 @@ export const Stopwatch = () => {
     clearInterval(intervalRef.current);
     setTime(0);
     setIsRunning(false);
+    setLaps([]);
   };
 
+    const lap = () =>{
+      setLaps((prev)=>[...prev,time]);
+
+    }
   useEffect(() => {
     return () => clearInterval(intervalRef.current);
   }, []);
 
-  const formatTime = (time) => {
-    const minutes = String(Math.floor(time / 60)).padStart(2, "0");
-    const seconds = String(time % 60).padStart(2, "0");
-    return `${minutes}:${seconds}`;
+   const formatTime = (ms) => {
+    const minutes = String(Math.floor(ms / 60000)).padStart(2, "0");
+    const seconds = String(Math.floor((ms % 60000) / 1000)).padStart(2, "0");
+    const milliseconds = String(Math.floor((ms % 1000) / 10)).padStart(2, "0"); // 2 digits
+    return `${minutes}:${seconds}:${milliseconds}`;
   };
 
   return (
@@ -64,7 +71,36 @@ export const Stopwatch = () => {
           >
             Reset
           </button>
+           <button
+            onClick={lap}
+            className="px-6 py-2 text-white backdrop-blur-md bg-orange-500 border-orange-600 rounded-xl cursor-pointer hover:bg-orange-800 transition"
+          >
+            Lap
+          </button>
+
         </div>
+        {
+              laps.length>0 && (
+                <div className="mt-6 text-left max-h-60 overflow-auto h-60">
+                  <h2 className="text-white text-lg font-semibold mb-2">Laps: </h2>
+                  <ul className="space-y-1 text-white font-mono">
+                    {
+                      laps.map((lap,index) =>{
+                        return(
+
+                        
+                        <li key={index}>
+                          Lap {index+1} : <span className="text-white/80">{formatTime(lap)}</span>
+                        </li>
+                        )  
+                    })
+                    }
+                  </ul>
+                </div>  
+              )}
+            
+
+       
       </div>
     </div>
   );
